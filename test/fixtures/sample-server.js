@@ -2,7 +2,88 @@ const {Server} = require('hapi')
 const Boom = require('boom')
 const Joi = require('joi')
 const crc32 = require('crc32')
+const assert = require('assert')
+const {Readable} = require('stream')
+process.env.READABLE_STREAM = 'disable' // make sure we don't use readable-stream polyfill
+const BufferList = require('bl')
+const multistream = require('multistream')
 const {checksumHeader, getLogger, enrichError} = require('mini-service-utils')
+
+/**
+ * List of exposed APIs
+ */
+exports.exposed = [{
+  group: 'sample',
+  id: 'ping',
+  params: [],
+  path: '/api/sample/ping',
+  hasBufferInput: false,
+  hasStreamInput: false
+}, {
+  group: 'sample',
+  id: 'greeting',
+  params: ['name'],
+  path: '/api/sample/greeting',
+  hasBufferInput: false,
+  hasStreamInput: false
+}, {
+  group: 'sample',
+  id: 'failing',
+  params: [],
+  path: '/api/sample/failing',
+  hasBufferInput: false,
+  hasStreamInput: false
+}, {
+  group: 'sample',
+  id: 'getUndefined',
+  params: [],
+  path: '/api/sample/get-undefined',
+  hasBufferInput: false,
+  hasStreamInput: false
+}, {
+  group: 'sample',
+  id: 'boomError',
+  params: [],
+  path: '/api/sample/boom-error',
+  hasBufferInput: false,
+  hasStreamInput: false
+}, {
+  group: 'sample',
+  id: 'noChecksum',
+  params: [],
+  path: '/api/sample/no-checksum',
+  hasBufferInput: false,
+  hasStreamInput: false
+}, {
+  group: 'sample',
+  id: 'withExoticParameters',
+  params: ['param1', 'param2', 'other'],
+  path: '/api/sample/with-exotic-parameters',
+  hasBufferInput: false,
+  hasStreamInput: false
+}, {
+  group: 'sample',
+  id: 'bufferHandling',
+  params: ['buffer'],
+  path: '/api/sample/buffer-handling',
+  hasBufferInput: true,
+  hasStreamInput: false
+}, {
+  group: 'sample',
+  id: 'streamHandling',
+  params: ['stream'],
+  path: '/api/sample/stream-handling',
+  hasBufferInput: false,
+  hasStreamInput: true
+}, {
+  // cannot happen with real mini-service
+  group: 'sample-service',
+  id: 'noGroup',
+  params: [],
+  path: '/api/sample-service/no-group',
+  hasBufferInput: true,
+  hasStreamInput: true
+}]
 
 /**
  * Start Hapi Http server that comply with mini-service conventions
@@ -14,23 +95,13 @@ const {checksumHeader, getLogger, enrichError} = require('mini-service-utils')
  * @param {Object} [opts.groupOpts] - api configuration
  * @returns {Promise} promise - resolve with the Hapi server as parameter
  */
-module.exports = async opts => {
+exports.startServer = async opts => {
   const options = Object.assign({
     port: 3000,
     logger: getLogger()
   }, opts)
 
-  const apis = [
-    {group: 'sample', id: 'ping', params: [], path: '/api/sample/ping'},
-    {group: 'sample-service', id: 'noGroup', params: [], path: '/api/sample-service/no-group'},
-    {group: 'sample', id: 'greeting', params: ['name'], path: '/api/sample/greeting'},
-    {group: 'sample', id: 'failing', params: [], path: '/api/sample/failing'},
-    {group: 'sample', id: 'getUndefined', params: [], path: '/api/sample/get-undefined'},
-    {group: 'sample', id: 'noChecksum', params: [], path: '/api/sample/no-checksum'},
-    {group: 'sample', id: 'withExoticParameters', params: ['param1', 'param2', 'other'], path: '/api/sample/with-exotic-parameters'}
-  ]
-
-  const checksum = crc32(JSON.stringify(apis))
+  const checksum = crc32(JSON.stringify(exports.exposed))
 
   const {port, logger, groupOpts} = options
   logger.debug({port}, 'Configure server')
@@ -94,6 +165,14 @@ module.exports = async opts => {
   })
 
   server.route({
+    method: 'GET',
+    path: '/api/sample/boom-error',
+    handler: () => {
+      throw Boom.unauthorized('Custom authorization error')
+    }
+  })
+
+  server.route({
     method: 'POST',
     path: '/api/sample/with-exotic-parameters',
     handler: ({payload: {param1: [a, b], param2: {c: {d}}, other, ...rest}}, h) => {
@@ -115,8 +194,44 @@ module.exports = async opts => {
     handler: () => ({
       name: 'sample-service',
       version: '1.0.0',
-      apis
+      apis: exports.exposed
     })
+  })
+
+  server.route({
+    method: 'POST',
+    path: '/api/sample/buffer-handling',
+    options: {
+      payload: {
+        parse: false,
+        output: 'data'
+      }
+    },
+    handler: ({payload: buffer}, h) => {
+      assert(Buffer.isBuffer(buffer))
+      return h
+        .response(Buffer.concat([buffer, new Uint8Array([3, 4])]))
+        .header(checksumHeader, checksum)
+    }
+  })
+
+  server.route({
+    method: 'POST',
+    path: '/api/sample/stream-handling',
+    options: {
+      payload: {
+        parse: false,
+        output: 'stream'
+      }
+    },
+    handler: ({payload: stream}) => {
+      assert(stream instanceof Readable)
+      const prefix = new BufferList()
+      prefix.append('here is a prefix -- ', 'utf8')
+      const res = multistream([prefix, stream])
+      res.headers = {[checksumHeader]: checksum}
+      return res
+    }
   })
 
   try {

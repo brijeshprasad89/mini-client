@@ -2,13 +2,13 @@
 <html><head></head><body><h1 id="mini-client">Mini-client</h1>
 <hr />
 <p>Simplistic µService library</p>
-<p><a href="https://npmjs.org/package/mini-client"><img src="https://img.shields.io/npm/v/mini-client.svg" alt="npm package"></a>
-<a href="https://nodesecurity.io/orgs/perso/projects/b3cd58fb-8840-487b-92ef-d3ca097e51a2"><img src="https://nodesecurity.io/orgs/perso/projects/b3cd58fb-8840-487b-92ef-d3ca097e51a2/badge" alt="NSP Status"></a>
-<a href="https://david-dm.org/feugy/mini-client"><img src="https://img.shields.io/david/feugy/mini-client.svg" alt="dependencies"></a>
-<a href="https://travis-ci.org/feugy/mini-client"><img src="https://api.travis-ci.org/feugy/mini-client.svg" alt="build"></a>
-<a href="https://coveralls.io/r/feugy/mini-client?branch=master"><img src="https://img.shields.io/coveralls/feugy/mini-client/master.svg" alt="coverage"></a>
-<a href="https://github.com/feugy/mini-service/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></a></p>
-<p>Mini-client is a generic client for µServices built with <a href="https://github.com/feugy/mini-service/">mini-service</a>.
+<p><a href="https://npmjs.org/package/mini-client"><img src="https://img.shields.io/npm/v/mini-client.svg" alt="npm package" style="max-width: 100%;"></a>
+<a href="https://nodesecurity.io/orgs/perso/projects/b3cd58fb-8840-487b-92ef-d3ca097e51a2"><img src="https://nodesecurity.io/orgs/perso/projects/b3cd58fb-8840-487b-92ef-d3ca097e51a2/badge" alt="NSP Status" style="max-width: 100%;"></a>
+<a href="https://david-dm.org/feugy/mini-client"><img src="https://img.shields.io/david/feugy/mini-client.svg" alt="dependencies" style="max-width: 100%;"></a>
+<a href="https://travis-ci.org/feugy/mini-client"><img src="https://api.travis-ci.org/feugy/mini-client.svg" alt="build" style="max-width: 100%;"></a>
+<a href="https://coveralls.io/r/feugy/mini-client?branch=master"><img src="https://img.shields.io/coveralls/feugy/mini-client/master.svg" alt="coverage" style="max-width: 100%;"></a>
+<a href="https://github.com/feugy/mini-service/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT" style="max-width: 100%;"></a></p>
+<p>Mini-client is a generic client for µServices built with <a href="https://github.com/feugy/mini-service">mini-service</a>.
 The goal of mini-service is to give the minimal structure to implement a µService, that can be invoked locally or remotely.</p>
 <p>Its principles are the following:</p>
 <ul>
@@ -21,7 +21,8 @@ The goal of mini-service is to give the minimal structure to implement a µServi
 <p>Please checkout the <a href="https://feugy.github.io/mini-client/">API reference</a></p>
 <p>This project was kindly sponsored by <a href="http://nearform.com">nearForm</a>.</p>
 <h2 id="generic-client-for-mini-services">Generic client for mini-services</h2>
-<p>Mini-client expose a generic client that can be wired to any service exposed with <a href="https://github.com/feugy/mini-service/">mini-service</a>.
+<hr />
+<p>Mini-client expose a generic client that can be wired to any service exposed with <a href="https://github.com/feugy/mini-service">mini-service</a>.
 It provides an JavaScript object, that will fetch exposed APIs and creates a function for each of them.
 This allow to invoke remote API like if they were plain function (it's a kind of good old RPC).</p>
 <p><code>caller-remote.js</code></p>
@@ -40,6 +41,7 @@ Calling a function that isn't an exposed API will fails as if you try to invoked
 was initiliazed with.</p>
 <p>Please note that you can call <code>init()</code> (see bellow), which doesn't do anything in "remote mode".</p>
 <h2 id="generic-client-for-local-services">Generic client for local services</h2>
+<hr />
 <p>While calling remote service is a realistic scenario for production environments, it's more convenient to run
 all code in the same unit on dev (for debugging) and in continuous integration.</p>
 <p>That's why mini-client can run the in "local mode".
@@ -61,10 +63,12 @@ calc.init().then(() =&gt;
 </ul>
 <p>Then, you can invoke exposed APIs as function like in "remote mode".</p>
 <h2 id="validations">Validations</h2>
+<hr />
 <p>When invoking an exposed API, Mini-client can report parameters validation error.
 If the distant service denies the operation because of a missing or errored parameter,
 the returned promise will be rejected with the appropriate error message.</p>
 <h2 id="checksum-compatibility-and-automatic-reloads">Checksum compatibility and automatic reloads</h2>
+<hr />
 <p>When Mini-client is running in remote mode, it caches remote exposed API at first call.
 But what would happened if a new version of remote server is redeployed ?</p>
 <p>If the list of newer exposed API equals the one used when Mini-client was started, everything will be fine.
@@ -74,7 +78,7 @@ On each call, Mini-client will compare that checksum with the one valid when it 
 <p>If both value differs, then Mini-Client will:</p>
 <ul>
 <li>mark all existing functions as deprecated (they will reject further call with appropriate error)<blockquote>
-<p>Remote server isn't compatible with current client (expects service-name@x.y.z)</p>
+<p>Remote server isn't compatible with current client (expects <a href="mailto:service-name@x.y.z">service-name@x.y.z</a>)</p>
 </blockquote>
 </li>
 <li>fetch new list of exposed APIs on remote server, and creates/updates function</li>
@@ -82,10 +86,13 @@ On each call, Mini-client will compare that checksum with the one valid when it 
 </ul>
 <p>When Mini-client is running on local mode, such situation can never happen.</p>
 <h2 id="license">License</h2>
+<hr />
 <p>Copyright <a href="https://github.com/feugy">Damien Simonin Feugas</a> and other contributors, licensed under <a href="./LICENSE">MIT</a>.</p>
-<h2 id="3-x-to-4-x-migration">3.x to 4.x migration</h2>
+<h2 id="3x-to-4x-migration">3.x to 4.x migration</h2>
+<hr />
 <p>None: v4 is using async/await, which requires node@8+. Code is fully backward compatible.</p>
-<h2 id="2-x-to-3-x-migration">2.x to 3.x migration</h2>
+<h2 id="2x-to-3x-migration">2.x to 3.x migration</h2>
+<hr />
 <p>Groups are now used as sub-objects of mini-client.</p>
 <p>Given a service exposing:</p>
 <ul>
@@ -105,7 +112,8 @@ On each call, Mini-client will compare that checksum with the one valid when it 
   }
 }
 </code></pre>
-<h2 id="1-x-to-2-x-migration">1.x to 2.x migration</h2>
+<h2 id="1x-to-2x-migration">1.x to 2.x migration</h2>
+<hr />
 <p>Local services, as remote services, <strong>must</strong> have <code>name</code> and <code>version</code> options defined</p>
 <p>When loading services, the <code>services</code> property was renamed to <code>groups</code>, and <code>serviceOpts</code> is now <code>groupOpts</code>:</p>
 <pre><code class="lang-javascript">const {startServer} = require('mini-service')

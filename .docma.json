@@ -1,0 +1,64 @@
+{
+  "src": [
+    "./lib/**/*.js",
+    "./*.md"
+  ],
+  "clean": true,
+  "dest": "./docs",
+  "jsdoc": {
+    "allowUnknownTags": true,
+    "hierarchy": true,
+    "recurse": true,
+    "sort": "grouped",
+    "plugins": [
+      "plugins/markdown"
+    ],
+    "markdown": {
+      "gfm": true
+    }
+  },
+  "markdown": {
+    "gfm": true,
+    "tables": true,
+    "tasks": true,
+    "emoji": true
+  },
+  "app": {
+    "title": "Mini-client documentation",
+    "base": "/mini-client",
+    "server": "github",
+    "entrance": "content:readme"
+  },
+  "template": {
+    "path": "default",
+    "options": {
+      "title": "mini-client",
+      "sidebar": {
+        "itemsFolded": true
+      },
+      "symbols": {
+        "params": "table"
+      },
+      "navbar": {
+        "menu": [{
+          "iconClass": "far fa-compass fa-lg",
+          "label": "Welcome",
+          "href": "?content=readme"
+        }, {
+          "iconClass": "fas fa-book fa-lg",
+          "label": "API Reference",
+          "href": "?api"
+        }, {
+          "iconClass": "fas fa-fire fa-lg",
+          "label": "Changelog",
+          "href": "?content=changelog"
+        }, {
+          "iconClass": "fab fa-github fa-lg",
+          "label": "GitHub",
+          "href": "https://github.com/feugy/mini-client",
+          "target": "_blank"
+        }]
+      }
+    }
+  }
+}

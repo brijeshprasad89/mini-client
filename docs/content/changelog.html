@@ -1,56 +1,124 @@
 
 <html><head></head><body><h1 id="changelog">Changelog</h1>
 <hr />
-<h2 id="4-1-0">4.1.0</h2>
+<h2 id="unreleased">Unreleased</h2>
+<hr />
+<h4 id="added">Added</h4>
 <ul>
-<li>Fix parsing error on exposed API written as <code>async a =&gt; {}</code> (usage of mini-serivce-utils@3.0.0)</li>
-<li>Added support of destructured parameters and rest parameters (previously was throwing errors)</li>
+<li>Support for Buffer and Stream parameters and results</li>
+<li><code>init()</code> method is now optional: initialization will occur at first call if needed, whatever transport used</li>
+<li>Usage of Yarn </li>
 </ul>
-<h2 id="4-0-0">4.0.0</h2>
+<h2 id="fixed">Fixed</h2>
+<hr />
+<ul>
+<li><code>client.exposed</code> contains the exposed descriptor, even with local transport (only http transport used to have one) </li>
+<li>Http errors are now wrapped in Boom errors with http transport (only local transport was propagating them)</li>
+</ul>
+<h4 id="changed">Changed</h4>
+<ul>
+<li>Reformat internals to introduce transports: better extensibility</li>
+<li><p><strong>Breaking</strong>: <code>buildClient()</code> throws only asynchronous validation errors  (<code>name</code> and <code>version</code> when using local service).</p>
+<p>Previously those errors were thrown synchronously.</p>
+</li>
+<li><p><strong>Breaking</strong>: when called, <code>init()</code> always refresh the exposed APIs. 
+This allows to force initialization proactively when suspecting a remote service change.</p>
+<p>Previously it was feching exposed APIs only once.</p>
+</li>
+<li><p><strong>Breaking</strong>: use <a href="https://github.com/sindresorhus/got">got</a> instead of <a href="https://github.com/request/request-promise-native">request-promise-native</a>. </p>
+<p>Thrown Error codes and message may be slighlty different.</p>
+</li>
+<li>Reformat CHANGELOG to follow <a href="https://keepachangelog.com">Keep a Changelog</a> recommandations</li>
+<li>New documentation with latest docma v2.0.0</li>
+<li>Dependencies update</li>
+</ul>
+<h2 id="410">4.1.0</h2>
+<hr />
+<h4 id="added">Added</h4>
+<ul>
+<li>Support for destructured parameters and rest parameters (previously was throwing errors)</li>
+</ul>
+<h4 id="fixed">Fixed</h4>
+<ul>
+<li>Parsing error on exposed API written as <code>async a =&gt; {}</code> (usage of <a href="mailto:mini-serivce-utils@3.0.0">mini-serivce-utils@3.0.0</a>)</li>
+</ul>
+<h2 id="400">4.0.0</h2>
+<hr />
+<h4 id="changed">Changed</h4>
 <ul>
 <li>Replace promise-based code with async/await equivalent</li>
 </ul>
-<h2 id="3-3-0">3.3.0</h2>
+<h2 id="330">3.3.0</h2>
+<hr />
+<h4 id="changed">Changed</h4>
 <ul>
-<li>Replace internals to use latest validation mecanics
-Error message when invoking an API with too many parameters is slightly different.
-Previously: <code>must contain at most</code>, now: <code>"x" is not allowed</code></li>
+<li><p>Replace internals to use latest validation mecanics</p>
+<p>Error message when invoking an API with too many parameters is slightly different.
+Previously: <code>must contain at most</code>, now: <code>"x" is not allowed</code></p>
+</li>
 <li>Update docs template from docdash to docma</li>
 <li>Dependencies update</li>
 </ul>
-<h2 id="3-2-1">3.2.1</h2>
+<h2 id="321">3.2.1</h2>
+<hr />
+<h4 id="added">Added</h4>
 <ul>
 <li>Allow http request timeout configuration</li>
 </ul>
-<h2 id="3-2-0">3.2.0</h2>
+<h2 id="320">3.2.0</h2>
+<hr />
+<h4 id="added">Added</h4>
 <ul>
 <li>Support synchronous <code>init()</code> and API functions</li>
 <li>API call fails with proper error it no checksum found</li>
+</ul>
+<h4 id="changed">Changed</h4>
+<ul>
 <li>Dependencies update</li>
 </ul>
-<h2 id="3-1-0">3.1.0</h2>
+<h2 id="310">3.1.0</h2>
+<hr />
+<h4 id="added">Added</h4>
 <ul>
 <li>Automatically reloads exposed APIs when remote server has changed, and mark previous APIs as deprecated</li>
+</ul>
+<h4 id="changed">Changed</h4>
+<ul>
 <li>Use <a href="https://standardjs.com/">standard.js</a> lint configuration</li>
+</ul>
+<h4 id="fixed">Fixed</h4>
+<ul>
 <li>Don't fail if an API resolves or returns <code>undefined</code> value.</li>
 </ul>
-<h2 id="3-0-0">3.0.0</h2>
+<h2 id="300">3.0.0</h2>
+<hr />
+<h4 id="added">Added</h4>
 <ul>
-<li><strong>[Breaking Change]</strong> Groups are now used as sub-objects of client.</li>
 <li>Use CRC32 checksum to validate that remote server is compatible</li>
+</ul>
+<h4 id="changed">Changed</h4>
+<ul>
+<li><strong>Breaking</strong>: Groups are now used as sub-objects of client.</li>
 <li>Dependencies update</li>
 </ul>
-<h2 id="2-0-0">2.0.0</h2>
+<h2 id="200">2.0.0</h2>
+<hr />
+<h4 id="added">Added</h4>
 <ul>
-<li>Introduce new terminology, with service descriptor and API groups</li>
 <li>Allow to declare API without groups</li>
 <li>Allow to declare API validation in group options</li>
-<li><strong>[Breaking Change]</strong> Force name+version on local client</li>
-<li><strong>[Breaking Change]</strong> When parsing exposed APIs, expect 'group' property instead of 'name'</li>
+</ul>
+<h4 id="changed">Changed</h4>
+<ul>
+<li>Introduce new terminology, with service descriptor and API groups</li>
+<li><strong>Breaking</strong>: Force name+version on local client</li>
+<li><strong>Breaking</strong>: When parsing exposed APIs, expect 'group' property instead of 'name'</li>
 <li>Better documentation</li>
 <li>More understandable error messages</li>
 </ul>
-<h2 id="1-0-0">1.0.0</h2>
+<h2 id="100">1.0.0</h2>
+<hr />
+<h4 id="added">Added</h4>
 <ul>
 <li>initial release</li>
 </ul>
